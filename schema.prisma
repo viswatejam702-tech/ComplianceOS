@@ -1,0 +1,688 @@
+{
+  "organizations": [
+    {
+      "id": "org-123",
+      "name": "ZetaTech Labs",
+      "subdomain": "zetatech",
+      "gistin": "27AAACZ1234A1Z5",
+      "pan": "AAACZ1234A"
+    }
+  ],
+  "users": [
+    {
+      "id": "usr-1",
+      "email": "viswatejam45@gmail.com",
+      "name": "Viswa Teja"
+    },
+    {
+      "id": "usr-2",
+      "email": "shreya@zetatech.in",
+      "name": "Shreya Sen (CISO)"
+    },
+    {
+      "id": "usr-3",
+      "email": "auditor@deloitte.in",
+      "name": "Rohan Gupta (External Auditor)"
+    },
+    {
+      "id": "usr-4",
+      "email": "viewer@zetatech.in",
+      "name": "Viewer User"
+    }
+  ],
+  "memberships": [
+    {
+      "id": "mem-1",
+      "userId": "usr-1",
+      "orgId": "org-123",
+      "role": "owner",
+      "joinedAt": "2026-06-08T02:59:27.895Z"
+    },
+    {
+      "id": "mem-2",
+      "userId": "usr-2",
+      "orgId": "org-123",
+      "role": "admin",
+      "joinedAt": "2026-06-08T02:59:27.897Z"
+    },
+    {
+      "id": "mem-3",
+      "userId": "usr-3",
+      "orgId": "org-123",
+      "role": "auditor",
+      "joinedAt": "2026-06-08T02:59:27.897Z"
+    },
+    {
+      "id": "mem-4",
+      "userId": "usr-4",
+      "orgId": "org-123",
+      "role": "viewer",
+      "joinedAt": "2026-06-08T02:59:27.897Z"
+    }
+  ],
+  "integrations": [
+    {
+      "id": "int-github",
+      "orgId": "org-123",
+      "type": "github",
+      "status": "connected",
+      "config": {
+        "repos": [
+          "zetatech-api",
+          "zetatech-web"
+        ]
+      },
+      "connectedAt": "2026-06-08T02:59:27.897Z"
+    },
+    {
+      "id": "int-aws",
+      "orgId": "org-123",
+      "type": "aws",
+      "status": "connected",
+      "config": {
+        "accountId": "987654321012"
+      },
+      "connectedAt": "2026-06-08T02:59:27.897Z"
+    },
+    {
+      "id": "int-gws",
+      "orgId": "org-123",
+      "type": "gws",
+      "status": "connected",
+      "config": {
+        "domain": "zetatech.in"
+      },
+      "connectedAt": "2026-06-08T02:59:27.897Z"
+    },
+    {
+      "id": "int-slack",
+      "orgId": "org-123",
+      "type": "slack",
+      "status": "connected",
+      "config": {
+        "workspace": "zetatech-hq",
+        "webhookUrl": "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX"
+      },
+      "connectedAt": "2026-06-08T02:59:27.897Z"
+    },
+    {
+      "id": "int-jira",
+      "orgId": "org-123",
+      "type": "jira",
+      "status": "disconnected",
+      "config": {}
+    }
+  ],
+  "integrationRuns": [
+    {
+      "id": "itr-q90dhw1hm",
+      "orgId": "org-123",
+      "integrationId": "int-multi",
+      "runAt": "2026-06-08T03:03:03.359Z",
+      "status": "success",
+      "results": [
+        {
+          "checkName": "Check branch protection rules",
+          "description": "Verify main/master branches require pull requests and check approval constraints",
+          "status": "fail",
+          "findings": "The Master branch in zetatech-api is completely unprotected. Direct push pushes can overwrite historical deployments and lead to unauthorized code execution.",
+          "controlId": "CC6.1"
+        },
+        {
+          "checkName": "Credentials Vulnerability Scanning",
+          "description": "Run automated TruffleHog / GitGuardian token scanner in commit histories",
+          "status": "fail",
+          "findings": "Automated secrets scanning detected 2 active credentials exposed in code repos: zetatech-api/src/config/database.ts (Line 14), zetatech-api/app.env (Line 8). These plain-text secrets pose immediate threat of unauthorized infrastructure takeovers.",
+          "controlId": "CC6.7"
+        },
+        {
+          "checkName": "Ensure all S3 buckets block open public access",
+          "description": "Checks bucket public access ACL parameters on AWS resource tags",
+          "status": "pass",
+          "findings": "All S3 assets are securely configured to prevent public reads under explicit IAM permissions.",
+          "controlId": "CC6.2"
+        },
+        {
+          "checkName": "Workspace account multifactor security check",
+          "description": "Validate employee accounts have active GWS login dual paths enabled",
+          "status": "warning",
+          "findings": "Only 3 out of 5 accounts have active multifactor verification. Offending accounts: shaurya.g@zetatech.in, part-time-dev@zetatech.in.",
+          "controlId": "CC6.3"
+        }
+      ]
+    }
+  ],
+  "controls": [
+    {
+      "id": "soc2-cc1.1",
+      "frameworkId": "soc2",
+      "domain": "CC1 Organization & Management",
+      "controlId": "CC1.1",
+      "name": "Security Committee Oversight",
+      "description": "Establish a direct reporting line of the security steering committee to the Board of Directors.",
+      "evidenceRequired": [
+        "Security Committee MoM",
+        "Board Meeting Approvals"
+      ],
+      "status": "pass",
+      "lastCheckedAt": "2026-06-07T02:59:27.897Z",
+      "assigneeId": "usr-2"
+    },
+    {
+      "id": "soc2-cc6.1",
+      "frameworkId": "soc2",
+      "domain": "CC6 Logical Access Control",
+      "controlId": "CC6.1",
+      "name": "GitHub Repository Branch Protection",
+      "description": "Ensure branch protection is strictly operational on core repositories (e.g., zetatech-api). Main branch must prevent direct pushes.",
+      "evidenceRequired": [
+        "GitHub Repos Branch Config JSON"
+      ],
+      "automatedCheckFn": "checkGitHubBranchProtection",
+      "status": "fail",
+      "lastCheckedAt": "2026-06-08T03:03:03.302Z",
+      "assigneeId": "usr-1"
+    },
+    {
+      "id": "soc2-cc6.2",
+      "frameworkId": "soc2",
+      "domain": "CC6 Logical Access Control",
+      "controlId": "CC6.2",
+      "name": "AWS S3 Private Bucket Policies",
+      "description": "Verify that default bucket configurations deny public access to S3 storage buckets.",
+      "evidenceRequired": [
+        "AWS S3 Buckets Configuration Report"
+      ],
+      "automatedCheckFn": "checkAWSS3BucketAccess",
+      "status": "pass",
+      "lastCheckedAt": "2026-06-08T03:03:03.359Z",
+      "assigneeId": "usr-1"
+    },
+    {
+      "id": "soc2-cc6.3",
+      "frameworkId": "soc2",
+      "domain": "CC6 Logical Access Control",
+      "controlId": "CC6.3",
+      "name": "Employee 2FA Compliance",
+      "description": "Ensure 100% of employees on Google Workspace have activated two-factor authentication (2FA).",
+      "evidenceRequired": [
+        "Google Workspace User 2FA Report"
+      ],
+      "automatedCheckFn": "checkGWS2FAConsistency",
+      "status": "partial",
+      "lastCheckedAt": "2026-06-08T03:03:03.359Z",
+      "assigneeId": "usr-2"
+    },
+    {
+      "id": "soc2-cc6.7",
+      "frameworkId": "soc2",
+      "domain": "CC6 Logical Access Control",
+      "controlId": "CC6.7",
+      "name": "Secret Keyword and Token Detection",
+      "description": "Automated scan of codebases to make sure zero active cryptographic keys/plain-text tokens are hardcoded.",
+      "evidenceRequired": [
+        "GitHub Secret Scanning Findings JSON"
+      ],
+      "automatedCheckFn": "checkGitHubSecretExposure",
+      "status": "fail",
+      "lastCheckedAt": "2026-06-08T03:03:03.358Z",
+      "assigneeId": "usr-1"
+    },
+    {
+      "id": "soc2-cc7.2",
+      "frameworkId": "soc2",
+      "domain": "CC7 System Operations",
+      "controlId": "CC7.2",
+      "name": "CloudTrail Trail Verification",
+      "description": "Validate that AWS CloudTrail logs are turned on and securely writing to encrypted storage buckets.",
+      "evidenceRequired": [
+        "AWS CloudTrail Policy Log Check"
+      ],
+      "automatedCheckFn": "checkAWSCloudTrailStatus",
+      "status": "pass",
+      "lastCheckedAt": "2026-06-07T02:59:27.897Z",
+      "assigneeId": "usr-1"
+    },
+    {
+      "id": "iso-a5.15",
+      "frameworkId": "iso27001",
+      "domain": "Annex A.5 Organizational Controls",
+      "controlId": "A.5.15",
+      "name": "Access Control Policy Compliance",
+      "description": "Define, publish, and maintain on-demand policy stating rights of network access.",
+      "evidenceRequired": [
+        "Access Control Policy Document"
+      ],
+      "status": "pass",
+      "lastCheckedAt": "2026-06-07T14:59:27.897Z",
+      "assigneeId": "usr-2"
+    },
+    {
+      "id": "iso-a8.20",
+      "frameworkId": "iso27001",
+      "domain": "Annex A.8 Technological Controls",
+      "controlId": "A.8.20",
+      "name": "Network & VPN Access Security",
+      "description": "Control access to enterprise servers via MFA-backed client VPN portals.",
+      "evidenceRequired": [
+        "VPN User Logs",
+        "AWS IGW Configurations"
+      ],
+      "status": "pass",
+      "lastCheckedAt": "2026-06-07T14:59:27.897Z",
+      "assigneeId": "usr-1"
+    },
+    {
+      "id": "iso-a8.28",
+      "frameworkId": "iso27001",
+      "domain": "Annex A.8 Technological Controls",
+      "controlId": "A.8.28",
+      "name": "Secure Coding & Protection Rule",
+      "description": "Validate secure release checks before code lands in main branches.",
+      "evidenceRequired": [
+        "GitHub Branch Config JSON"
+      ],
+      "automatedCheckFn": "checkGitHubBranchProtection",
+      "status": "fail",
+      "lastCheckedAt": "2026-06-08T03:03:03.355Z",
+      "assigneeId": "usr-1"
+    },
+    {
+      "id": "rbi-1.1",
+      "frameworkId": "rbi-nbfc",
+      "domain": "Domain 1: IT Governance",
+      "controlId": "D1.1",
+      "name": "IT Steering Committee MoM",
+      "description": "Mandated quarterly committee tracking IT risks, investments, and progress audit schedules.",
+      "evidenceRequired": [
+        "IT Steering Minutes",
+        "RBI Annual Audit Checklist"
+      ],
+      "status": "pass",
+      "lastCheckedAt": "2026-06-06T02:59:27.897Z",
+      "assigneeId": "usr-2"
+    },
+    {
+      "id": "rbi-4.2",
+      "frameworkId": "rbi-nbfc",
+      "domain": "Domain 4: Information Security",
+      "controlId": "D4.2",
+      "name": "Dual Authentication Gateways",
+      "description": "Activate RBI-prescribed dual factors of validation for any financial transactional systems or management consoles.",
+      "evidenceRequired": [
+        "GWS 2FA Compliance JSON"
+      ],
+      "automatedCheckFn": "checkGWS2FAConsistency",
+      "status": "partial",
+      "lastCheckedAt": "2026-06-08T03:03:03.359Z",
+      "assigneeId": "usr-2"
+    },
+    {
+      "id": "rbi-7.1",
+      "frameworkId": "rbi-nbfc",
+      "domain": "Domain 7: Disaster Recovery",
+      "controlId": "D7.1",
+      "name": "Board-Passed Business Continuity Plan",
+      "description": "Annual verification of NBFC recovery strategies validated by Chief compliance officer.",
+      "evidenceRequired": [
+        "BCP Document Approval Version"
+      ],
+      "status": "pass",
+      "lastCheckedAt": "2026-06-06T02:59:27.897Z",
+      "assigneeId": "usr-2"
+    }
+  ],
+  "evidenceItems": [
+    {
+      "id": "ev-1",
+      "orgId": "org-123",
+      "controlId": "soc2-cc6.1",
+      "name": "GitHub Master Branch Configuration",
+      "source": "GitHub Agent Scan",
+      "type": "json",
+      "content": "{\n  \"repository\": \"zetatech-api\",\n  \"branch\": \"main\",\n  \"protection_enabled\": false,\n  \"required_approving_review_count\": 0,\n  \"dismiss_stale_reviews\": false,\n  \"enforce_admins\": false,\n  \"restrictions\": null,\n  \"checks_passed\": false\n}",
+      "createdAt": "2026-06-07T02:59:27.897Z"
+    },
+    {
+      "id": "ev-2",
+      "orgId": "org-123",
+      "controlId": "soc2-cc6.2",
+      "name": "ZetaTech AWS S3 Buckets Policy Output",
+      "source": "AWS Scanner Audit",
+      "type": "json",
+      "content": "{\n  \"scanned_buckets_count\": 3,\n  \"public_read_access_detected\": false,\n  \"buckets\": [\n    {\n      \"name\": \"zetatech-client-assets\",\n      \"encryption_type\": \"AES256\",\n      \"public_access_blocked\": true\n    },\n    {\n      \"name\": \"zetatech-confidential-storage\",\n      \"encryption_type\": \"aws:kms\",\n      \"public_access_blocked\": true\n    },\n    {\n      \"name\": \"zetatech-billing-receipts\",\n      \"encryption_type\": \"AES256\",\n      \"public_access_blocked\": true\n    }\n  ],\n  \"verdict\": \"all_private_and_secure\"\n}",
+      "createdAt": "2026-06-07T02:59:27.897Z"
+    },
+    {
+      "id": "ev-3",
+      "orgId": "org-123",
+      "controlId": "soc2-cc6.3",
+      "name": "GWS User Security Status",
+      "source": "GWS 2FA Sync Tool",
+      "type": "json",
+      "content": "{\n  \"org_domain\": \"zetatech.in\",\n  \"total_accounts\": 5,\n  \"mfa_enabled_count\": 3,\n  \"mfa_disabled_accounts\": [\n    \"shaurya.g@zetatech.in\",\n    \"part-time-dev@zetatech.in\"\n  ],\n  \"audit_verdict\": \"partial_compliance_60_percent\"\n}",
+      "createdAt": "2026-06-07T02:59:27.897Z"
+    },
+    {
+      "id": "ev-86q1ietqw",
+      "orgId": "org-123",
+      "controlId": "soc2-cc6.1",
+      "name": "GITHUB Automated Scan: Check branch protection rules",
+      "source": "GITHUB Compliance Agent",
+      "type": "json",
+      "content": "{\n  \"scan_payload\": {\n    \"repository\": \"zetatech-api\",\n    \"branch\": \"main\",\n    \"protection_enabled\": false,\n    \"required_approving_review_count\": 0,\n    \"dismiss_stale_reviews\": false,\n    \"enforce_admins\": false,\n    \"restrictions\": null,\n    \"checks_passed\": false\n  },\n  \"ai_evaluation\": {\n    \"verdict\": \"fail\",\n    \"reasoning\": \"The Master branch in zetatech-api is completely unprotected. Direct push pushes can overwrite historical deployments and lead to unauthorized code execution.\",\n    \"remediation\": \"1. Navigate to GitHub > Settings > Branches.\\n2. Click 'Add rule' for branch 'main'.\\n3. Flag 'Require a pull request before merging' and select 1 minimum review.\",\n    \"analyzed_at\": \"2026-06-08T03:03:03.357Z\"\n  }\n}",
+      "createdAt": "2026-06-08T03:03:03.357Z"
+    },
+    {
+      "id": "ev-oewndhqaj",
+      "orgId": "org-123",
+      "controlId": "soc2-cc6.7",
+      "name": "GITHUB Automated Scan: Credentials Vulnerability Scanning",
+      "source": "GITHUB Compliance Agent",
+      "type": "json",
+      "content": "{\n  \"scan_payload\": {\n    \"last_commit_scanned\": \"b67a1c9\",\n    \"hardcoded_secrets_found\": 2,\n    \"active_tokens_exposed\": true,\n    \"findings\": [\n      {\n        \"id\": \"sec-1\",\n        \"repo\": \"zetatech-api\",\n        \"file\": \"src/config/database.ts\",\n        \"line\": 14,\n        \"type\": \"db_password\",\n        \"masked\": \"postgresql://postgres:********@localhost:5432/zetatech\",\n        \"severity\": \"high\"\n      },\n      {\n        \"id\": \"sec-2\",\n        \"repo\": \"zetatech-api\",\n        \"file\": \"app.env\",\n        \"line\": 8,\n        \"type\": \"aws_key\",\n        \"masked\": \"AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/********\",\n        \"severity\": \"critical\"\n      }\n    ],\n    \"scan_success\": true\n  },\n  \"ai_evaluation\": {\n    \"verdict\": \"fail\",\n    \"reasoning\": \"Automated secrets scanning detected 2 active credentials exposed in code repos: zetatech-api/src/config/database.ts (Line 14), zetatech-api/app.env (Line 8). These plain-text secrets pose immediate threat of unauthorized infrastructure takeovers.\",\n    \"remediation\": \"1. Revoke the exposed keys immediately at AWS and Database admins.\\n2. Remediate findings by deleting credentials from repos and re-scanning.\\n3. Implement Git pre-commit hooks to block local pushes containing private formats.\",\n    \"analyzed_at\": \"2026-06-08T03:03:03.359Z\"\n  }\n}",
+      "createdAt": "2026-06-08T03:03:03.359Z"
+    },
+    {
+      "id": "ev-3zgoj9lfu",
+      "orgId": "org-123",
+      "controlId": "soc2-cc6.2",
+      "name": "AWS Automated Scan: Ensure all S3 buckets block open public access",
+      "source": "AWS Compliance Agent",
+      "type": "json",
+      "content": "{\n  \"scan_payload\": {\n    \"scanned_buckets_count\": 3,\n    \"public_read_access_detected\": false,\n    \"buckets\": [\n      {\n        \"name\": \"zetatech-client-assets\",\n        \"encryption_type\": \"AES256\",\n        \"public_access_blocked\": true\n      },\n      {\n        \"name\": \"zetatech-confidential-storage\",\n        \"encryption_type\": \"aws:kms\",\n        \"public_access_blocked\": true\n      },\n      {\n        \"name\": \"zetatech-billing-receipts\",\n        \"encryption_type\": \"AES256\",\n        \"public_access_blocked\": true\n      }\n    ],\n    \"verdict\": \"all_private_and_secure\"\n  },\n  \"ai_evaluation\": {\n    \"verdict\": \"pass\",\n    \"reasoning\": \"All S3 assets are securely configured to prevent public reads under explicit IAM permissions.\",\n    \"remediation\": \"None required. Maintain active S3 access sweeps.\",\n    \"analyzed_at\": \"2026-06-08T03:03:03.359Z\"\n  }\n}",
+      "createdAt": "2026-06-08T03:03:03.359Z"
+    },
+    {
+      "id": "ev-qqfwt2af",
+      "orgId": "org-123",
+      "controlId": "soc2-cc6.3",
+      "name": "GWS Automated Scan: Workspace account multifactor security check",
+      "source": "GWS Compliance Agent",
+      "type": "json",
+      "content": "{\n  \"scan_payload\": {\n    \"org_domain\": \"zetatech.in\",\n    \"total_accounts\": 5,\n    \"mfa_enabled_count\": 3,\n    \"mfa_disabled_accounts\": [\n      \"shaurya.g@zetatech.in\",\n      \"part-time-dev@zetatech.in\"\n    ],\n    \"audit_verdict\": \"partial_compliance_60_percent\"\n  },\n  \"ai_evaluation\": {\n    \"verdict\": \"partial\",\n    \"reasoning\": \"Only 3 out of 5 accounts have active multifactor verification. Offending accounts: shaurya.g@zetatech.in, part-time-dev@zetatech.in.\",\n    \"remediation\": \"Trigger GWS safety administration alert and force MFA configuration on next login for non-compliant emails.\",\n    \"analyzed_at\": \"2026-06-08T03:03:03.359Z\"\n  }\n}",
+      "createdAt": "2026-06-08T03:03:03.359Z"
+    }
+  ],
+  "policies": [
+    {
+      "id": "pol-1",
+      "orgId": "org-123",
+      "title": "Information Security Policy",
+      "type": "infosec",
+      "status": "approved",
+      "createdBy": "usr-2",
+      "approvedBy": "usr-2",
+      "content": "# Information Security Policy\n\n**Company name:** ZetaTech Labs\n**Last updated:** June 2026\n\n## 1. Objective\nThis document mandates robust defenses for data management across our Indian startup architecture, mapped to statutory SOC 2 CC1-9 frameworks, ISO 27001, and RBI criteria.\n\n## 2. Infrastructure Security\n- All computing instances must enforce strict firewalls.\n- Production clusters are isolated in private VPC subnets.\n\n## 3. Personnel Commitments\nAll staff must undergo mandatory annual background checks, submit confidentiality deeds, and follow proper asset usage practices.",
+      "updatedAt": "2026-06-05T02:59:27.897Z"
+    },
+    {
+      "id": "pol-2",
+      "orgId": "org-123",
+      "title": "Access Control Policy",
+      "type": "access-control",
+      "status": "approved",
+      "createdBy": "usr-2",
+      "approvedBy": "usr-2",
+      "content": "# Access Control Policy\n\n**Company name:** ZetaTech Labs\n**Last updated:** June 2026\n\n## 1. Principles of Least Privilege\nAccess is granted strictly based on role-essential targets. Developer sandboxes are structurally segmented from live application databases.\n\n## 2. MFA Authentication Rule\n- Single sign-on tools or individual credentials require MFA activation.\n- Google Workspace accounts must enforce 100% active 2FA status.\n\n## 3. Account Deprovisioning\nOn employee offboarding, administrative roles are deactivated immediately and overall credentials revoked within 2 hours.",
+      "updatedAt": "2026-06-06T02:59:27.897Z"
+    },
+    {
+      "id": "pol-3",
+      "orgId": "org-123",
+      "title": "Incident Response Plan",
+      "type": "incident-response",
+      "status": "review",
+      "createdBy": "usr-1",
+      "content": "# Incident Response Plan\n\n**Company name:** ZetaTech Labs\n**Last updated:** June 2026\n\n## 1. Identification and Severity\nOur operations team monitors CloudTrail notifications and server logs. Incidents are classified based on technical leakage risks (Severity 1 to 3).\n\n## 2. Containment and Remediation\nOnce identified, affected instances are detached from public networks. Backups are verified before database restorations.\n\n## 3. Regulatory Escalations\nIn statutory compliance with CERT-In directives, data security breaches must be officially reported to the Indian Computer Emergency Response Team within 6 hours.",
+      "updatedAt": "2026-06-07T22:59:27.897Z"
+    }
+  ],
+  "policyVersions": [
+    {
+      "id": "v-pol-1",
+      "policyId": "pol-1",
+      "version": 1,
+      "content": "Initial Draft of InfoSec",
+      "status": "approved",
+      "createdBy": "usr-2",
+      "approvedBy": "usr-2",
+      "changedAt": "2026-06-08T02:59:27.897Z"
+    },
+    {
+      "id": "v-pol-2",
+      "policyId": "pol-2",
+      "version": 1,
+      "content": "Initial Access Policy",
+      "status": "approved",
+      "createdBy": "usr-2",
+      "approvedBy": "usr-2",
+      "changedAt": "2026-06-08T02:59:27.897Z"
+    },
+    {
+      "id": "v-pol-3",
+      "policyId": "pol-3",
+      "version": 1,
+      "content": "First Draft of IR Plan",
+      "status": "review",
+      "createdBy": "usr-1",
+      "changedAt": "2026-06-08T02:59:27.897Z"
+    }
+  ],
+  "auditEngagements": [
+    {
+      "id": "aud-1",
+      "orgId": "org-123",
+      "frameworkId": "soc2",
+      "name": "Q2 2026 SOC 2 Type II Audit",
+      "status": "in_progress",
+      "externalAuditorEmail": "auditor@deloitte.in",
+      "externalAuditorName": "Rohan Gupta",
+      "startDate": "2026-05-29T02:59:27.897Z",
+      "targetCompletionDate": "2026-07-08T02:59:27.897Z",
+      "milestones": [
+        {
+          "id": "mil-1",
+          "title": "Setup Organization Scopes",
+          "dueDate": "2026-06-03T02:59:27.897Z",
+          "status": "completed"
+        },
+        {
+          "id": "mil-2",
+          "title": "Review Automated GitHub & AWS Evidence Logs",
+          "dueDate": "2026-06-07T14:59:27.897Z",
+          "status": "pending"
+        },
+        {
+          "id": "mil-3",
+          "title": "Approval of Core InfoSec & Access Control Policies",
+          "dueDate": "2026-06-10T02:59:27.897Z",
+          "status": "pending"
+        },
+        {
+          "id": "mil-4",
+          "title": "Final Attestation Sign-off",
+          "dueDate": "2026-07-08T02:59:27.897Z",
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "auditComments": [
+    {
+      "id": "com-1",
+      "auditId": "aud-1",
+      "controlId": "soc2-cc6.1",
+      "authorId": "usr-3",
+      "authorName": "Rohan Gupta",
+      "authorRole": "auditor",
+      "comment": "I see branch protection fails because force-pushes and administrative bypasses are still enabled on the 'zetatech-api' repository. Please configure branch restrictions strictly.",
+      "createdAt": "2026-06-07T18:59:27.897Z"
+    },
+    {
+      "id": "com-2",
+      "auditId": "aud-1",
+      "controlId": "soc2-cc6.3",
+      "authorId": "usr-3",
+      "authorName": "Rohan Gupta",
+      "authorRole": "auditor",
+      "comment": "Two members are currently listed as 2FA inactive on Google Workspace. We require 100% compliance here.",
+      "createdAt": "2026-06-07T20:59:27.897Z"
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": "sub-1",
+      "orgId": "org-123",
+      "planId": "growth",
+      "status": "active",
+      "amount": 14999,
+      "billingPeriod": "monthly",
+      "nextBillingAt": "2026-07-02T02:59:27.897Z",
+      "autoDebitEnabled": true,
+      "gstin": "27AAACZ1234A1Z5"
+    }
+  ],
+  "invoices": [
+    {
+      "id": "inv-101",
+      "orgId": "org-123",
+      "subscriptionId": "sub-1",
+      "invoiceNumber": "COS-2026-06-101",
+      "amount": 14999,
+      "gstAmount": 2699.82,
+      "totalAmount": 17698.82,
+      "status": "paid",
+      "date": "2026-06-02T02:59:27.897Z",
+      "dueDate": "2026-06-07T02:59:27.897Z",
+      "gstin": "27AAACZ1234A1Z5"
+    },
+    {
+      "id": "inv-102",
+      "orgId": "org-123",
+      "subscriptionId": "sub-1",
+      "invoiceNumber": "COS-2026-05-098",
+      "amount": 14999,
+      "gstAmount": 2699.82,
+      "totalAmount": 17698.82,
+      "status": "paid",
+      "date": "2026-05-03T02:59:27.897Z",
+      "dueDate": "2026-05-08T02:59:27.897Z",
+      "gstin": "27AAACZ1234A1Z5"
+    }
+  ],
+  "notificationCenter": [
+    {
+      "id": "not-mgblo6nm4",
+      "orgId": "org-123",
+      "text": "Urgent Audit Failures: 2 automated compliance controls failed with critical vulnerabilities. View gap analysis for recommendations.",
+      "read": false,
+      "createdAt": "2026-06-08T03:03:03.359Z"
+    },
+    {
+      "id": "not-1",
+      "orgId": "org-123",
+      "text": "Critcal Failure: GitHub Master Branch Protection disabled in source repositories.",
+      "read": false,
+      "createdAt": "2026-06-08T02:59:27.897Z"
+    },
+    {
+      "id": "not-2",
+      "orgId": "org-123",
+      "text": "CISO Shreya Sen marked Access Control Policy as Approved.",
+      "read": true,
+      "createdAt": "2026-06-07T22:59:27.897Z"
+    },
+    {
+      "id": "not-3",
+      "orgId": "org-123",
+      "text": "Auditor Rohan Gupta left a comment on CC6.1 Logical Access control.",
+      "read": false,
+      "createdAt": "2026-06-07T18:59:27.897Z"
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "log-kxyde04p9",
+      "userId": "usr-1",
+      "userEmail": "viswatejam45@gmail.com",
+      "userName": "Viswa Teja",
+      "userRole": "owner",
+      "action": "evidence_upload",
+      "timestamp": "2026-06-08T03:03:03.359Z",
+      "context": {
+        "orgId": "org-123",
+        "affectedResource": "automated-scanners",
+        "details": "Initiated full multi-cloud automated sweep. Scanned standard controls and evaluated with Gemini. Status: Completed."
+      }
+    },
+    {
+      "id": "log-4iz26z5v",
+      "userId": "system",
+      "userEmail": "viewer@zetatech.in",
+      "userName": "Viewer User",
+      "userRole": "owner",
+      "action": "csrf_failure",
+      "timestamp": "2026-06-08T02:59:54.709Z",
+      "context": {
+        "ip": "127.0.0.1",
+        "path": "/api/orgs/org-123/evidence/run",
+        "details": "State-changing API invocation rejected due to invalid, mismatching, or absent CSRF token."
+      }
+    },
+    {
+      "id": "log-1",
+      "userId": "usr-2",
+      "userEmail": "shreya@zetatech.in",
+      "userName": "Shreya Sen (CISO)",
+      "userRole": "admin",
+      "action": "policy_modified",
+      "timestamp": "2026-06-06T02:59:27.897Z",
+      "context": {
+        "orgId": "org-123",
+        "affectedResource": "pol-2",
+        "details": "Approved Access Control Policy v1"
+      }
+    },
+    {
+      "id": "log-2",
+      "userId": "usr-1",
+      "userEmail": "viswatejam45@gmail.com",
+      "userName": "Viswa Teja",
+      "userRole": "owner",
+      "action": "config_changed",
+      "timestamp": "2026-06-07T02:59:27.897Z",
+      "context": {
+        "orgId": "org-123",
+        "affectedResource": "int-github",
+        "details": "Connected GitHub Cloud Integration"
+      }
+    }
+  ],
+  "secretFindings": [
+    {
+      "id": "sec-1",
+      "repo": "zetatech-api",
+      "filePath": "src/config/database.ts",
+      "lineNumber": 14,
+      "commitHash": "a3b5c1d",
+      "secretType": "db_password",
+      "secretMasked": "postgresql://postgres:********@localhost:5432/zetatech",
+      "severity": "high",
+      "status": "active",
+      "detectedAt": "2026-06-05T02:59:27.897Z"
+    },
+    {
+      "id": "sec-2",
+      "repo": "zetatech-api",
+      "filePath": "app.env",
+      "lineNumber": 8,
+      "commitHash": "b67a1c9",
+      "secretType": "aws_key",
+      "secretMasked": "AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/********",
+      "severity": "critical",
+      "status": "active",
+      "detectedAt": "2026-06-06T14:59:27.897Z"
+    }
+  ]
+}

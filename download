@@ -1,0 +1,215 @@
+import React, { useEffect, useRef } from "react";
+
+export default function ThreeBackground() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    // Initialize 150 stars (highly performant and looks perfectly spaced for an elegant background)
+    const stars: { x: number; y: number; r: number; speed: number; phase: number; baseOpacity: number }[] = [];
+    for (let i = 0; i < 150; i++) {
+      stars.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: Math.random() * 1.2 + 0.3,
+        speed: Math.random() * 0.02 + 0.005,
+        phase: Math.random() * Math.PI * 2,
+        baseOpacity: Math.random() * 0.5 + 0.3,
+      });
+    }
+
+    const handleResize = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+    window.addEventListener("resize", handleResize);
+
+    // Grid details
+    let gridOffset = 0;
+
+    // Orb details
+    let orbAngle = 0;
+
+    // SaaS orbiting nodes
+    const saasNodes = [
+      { name: "AWS", color: "#ffb347", radius: 110, speed: 0.006, angle: 0 },
+      { name: "Github", color: "#4a9eff", radius: 150, speed: -0.004, angle: Math.PI / 2 },
+      { name: "GWS", color: "#00ff88", radius: 190, speed: 0.003, angle: Math.PI },
+      { name: "Jira", color: "#ff4466", radius: 230, speed: -0.002, angle: (Math.PI * 3) / 2 },
+      { name: "Slack", color: "#c14aff", radius: 270, speed: 0.0015, angle: Math.PI / 4 },
+    ];
+
+    const draw = () => {
+      const isLight = document.documentElement.getAttribute("data-theme") === "light";
+
+      // Background gradient
+      ctx.fillStyle = isLight ? "#f8fafc" : "#03030f";
+      ctx.fillRect(0, 0, width, height);
+
+      // Deep space radial glow
+      const radialGlow = ctx.createRadialGradient(
+        width / 2,
+        height * 0.45,
+        10,
+        width / 2,
+        height * 0.45,
+        width * 0.6
+      );
+      if (isLight) {
+        radialGlow.addColorStop(0, "rgba(99, 102, 241, 0.05)");
+        radialGlow.addColorStop(0.5, "rgba(241, 245, 249, 0)");
+      } else {
+        radialGlow.addColorStop(0, "rgba(74, 158, 255, 0.08)");
+        radialGlow.addColorStop(0.5, "rgba(3, 3, 15, 0)");
+      }
+      ctx.fillStyle = radialGlow;
+      ctx.fillRect(0, 0, width, height);
+
+      // Draw Twinkling Stars / Bubbles
+      stars.forEach((star) => {
+        star.phase += star.speed;
+        const opacity = star.baseOpacity + Math.sin(star.phase) * 0.3;
+        ctx.fillStyle = isLight 
+          ? `rgba(99, 102, 241, ${Math.max(0.08, Math.min(0.3, opacity * 0.4))})`
+          : `rgba(255, 255, 255, ${Math.max(0.1, Math.min(1, opacity))})`;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Perspective wireframe grid in lower 40%
+      const gridStartY = height * 0.65;
+      const gridHeight = height * 0.35;
+      gridOffset = (gridOffset + 0.6) % 30; // forward motion rate
+
+      ctx.strokeStyle = isLight ? "rgba(99, 102, 241, 0.04)" : "rgba(74, 158, 255, 0.07)";
+      ctx.lineWidth = 0.5;
+
+      // Draw horizontal parallax lines
+      for (let y = 0; y < gridHeight; y += 30) {
+        const progress = y / gridHeight;
+        const mappedY = gridStartY + Math.pow(progress, 1.8) * gridHeight;
+        ctx.beginPath();
+        ctx.moveTo(0, mappedY);
+        ctx.lineTo(width, mappedY);
+        ctx.stroke();
+      }
+
+      // Draw receding perspective lines
+      const vanishingX = width / 2;
+      const vanishingY = gridStartY - 100;
+      const gridLinesCount = 30;
+      for (let i = 0; i <= gridLinesCount; i++) {
+        const xOffset = (width / gridLinesCount) * i;
+        ctx.beginPath();
+        ctx.moveTo(vanishingX, vanishingY);
+        ctx.lineTo(xOffset, height);
+        ctx.stroke();
+      }
+
+      // Draw Floating Compliance Orb in the center/upper area
+      const orbX = width / 2;
+      const orbY = height * 0.35 + Math.sin(orbAngle * 2) * 12; // bounce
+      orbAngle += 0.005;
+
+      // Main Orb Glow
+      const orbGlow = ctx.createRadialGradient(orbX, orbY, 0, orbX, orbY, 65);
+      if (isLight) {
+        orbGlow.addColorStop(0, "rgba(99, 102, 241, 0.15)");
+        orbGlow.addColorStop(0.4, "rgba(99, 102, 241, 0.04)");
+        orbGlow.addColorStop(1, "rgba(0, 0, 0, 0)");
+      } else {
+        orbGlow.addColorStop(0, "rgba(74, 158, 255, 0.25)");
+        orbGlow.addColorStop(0.4, "rgba(74, 158, 255, 0.08)");
+        orbGlow.addColorStop(1, "rgba(0, 0, 0, 0)");
+      }
+      ctx.fillStyle = orbGlow;
+      ctx.beginPath();
+      ctx.arc(orbX, orbY, 65, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Outer holographic orbit circles
+      ctx.strokeStyle = isLight ? "rgba(99, 102, 241, 0.1)" : "rgba(74, 158, 255, 0.12)";
+      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 1;
+
+      // Inner wireframe sphere structure mimicking ThreeJS Core Orb
+      ctx.beginPath();
+      ctx.arc(orbX, orbY, 32, 0, Math.PI * 2);
+      ctx.font = "9px monospace";
+      ctx.fillStyle = isLight ? "rgba(99, 102, 241, 0.6)" : "rgba(74, 158, 255, 0.5)";
+      ctx.textAlign = "center";
+      ctx.fillText("COMP-CORE", orbX, orbY + 3);
+      ctx.stroke();
+
+      // Standard orbital tracking
+      ctx.setLineDash([]);
+      saasNodes.forEach((node) => {
+        node.angle += node.speed;
+
+        // Flatten orbit circle for perspective
+        const orbitRadiusX = node.radius * 1.4;
+        const orbitRadiusY = node.radius * 0.35;
+
+        // Draw faint orbit paths
+        ctx.strokeStyle = isLight ? "rgba(99, 102, 241, 0.03)" : "rgba(74, 158, 255, 0.04)";
+        ctx.beginPath();
+        ctx.ellipse(orbX, orbY, orbitRadiusX, orbitRadiusY, Math.PI / 12, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Calculate actual particle position on flattened ellipse
+        const cos = Math.cos(node.angle);
+        const sin = Math.sin(node.angle);
+        const rot = Math.PI / 12; // orbit tilt
+
+        // Coordinates after 2D rotation
+        const pX = orbX + (cos * orbitRadiusX * Math.cos(rot) - sin * orbitRadiusY * Math.sin(rot));
+        const pY = orbY + (cos * orbitRadiusX * Math.sin(rot) + sin * orbitRadiusY * Math.cos(rot));
+
+        // Draw dynamic glowing node
+        ctx.fillStyle = isLight ? "#6366F1" : node.color;
+        ctx.beginPath();
+        ctx.arc(pX, pY, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Node flare glow
+        ctx.fillStyle = (isLight ? "#6366F1" : node.color) + "1a";
+        ctx.beginPath();
+        ctx.arc(pX, pY, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Small label tag
+        ctx.fillStyle = isLight ? "rgba(99, 102, 241, 0.7)" : "rgba(255, 255, 255, 0.4)";
+        ctx.font = "8px monospace";
+        ctx.textAlign = "left";
+        ctx.fillText(node.name, pX + 8, pY + 3);
+      });
+
+      animationFrameId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 w-full h-full pointer-events-none"
+      style={{ zIndex: 0 }}
+    />
+  );
+}

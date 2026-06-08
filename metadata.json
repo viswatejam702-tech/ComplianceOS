@@ -1,0 +1,6 @@
+{
+  "name": "ComplianceOS",
+  "description": "AI-powered compliance automation platform for SOC 2 Type II, ISO 27001, and RBI/SEBI regulatory compliance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
